@@ -6,4 +6,16 @@ module.exports = {
   // static: {
   //   enable: true,
   // }
+  routerGroup: {
+    enable: true,
+    package: 'egg-router-group',
+  },
+  mongoose: {
+    enable: true,
+    package: 'egg-mongoose',
+  },
+  validate: {
+    enable: true,
+    package: 'egg-validate',
+  },
 };
