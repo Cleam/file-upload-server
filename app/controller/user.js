@@ -2,7 +2,6 @@
 const md5 = require('md5');
 const jwt = require('jsonwebtoken');
 const BaseController = require('./base');
-const HashSalt = ':lzg@xyz!!'; // 盐
 const rules = {
   email: { required: true, type: 'string' },
   nickname: { required: true, type: 'string' },
@@ -12,7 +11,7 @@ const rules = {
 
 class UserController extends BaseController {
   async register() {
-    const { ctx } = this;
+    const { ctx, app } = this;
     try {
       ctx.validate(rules);
     } catch (error) {
@@ -32,7 +31,7 @@ class UserController extends BaseController {
       const user = await ctx.model.User.create({
         email,
         nickname,
-        pass: md5(pass + HashSalt),
+        pass: md5(pass + app.config.jwt.secret),
       });
       if (user._id) {
         this.message('注册成功');
@@ -41,13 +40,16 @@ class UserController extends BaseController {
   }
   async login() {
     const { ctx, app } = this;
-    const { email, pass, captcha } = ctx.request.body;
+    const { email, pass, captcha, emailcode } = ctx.request.body;
     if (captcha.toUpperCase() !== ctx.session.captcha.toUpperCase()) {
       return this.error('验证码不正确');
     }
+    if (emailcode.toUpperCase() !== ctx.session.emailCode.toUpperCase()) {
+      return this.error('邮箱验证码不正确');
+    }
     const user = await ctx.model.User.findOne({
       email,
-      pass: md5(pass + HashSalt),
+      pass: md5(pass + app.config.jwt.secret),
     });
     if (!user) {
       return this.error('邮箱或密码错误');
@@ -71,6 +73,12 @@ class UserController extends BaseController {
   }
   async checkEmail(email) {
     return await this.ctx.model.User.findOne({ email });
+  }
+
+  // 用户信息
+  async info() {
+    const user = await this.checkEmail(this.ctx.state.email);
+    this.success(user);
   }
 }
 

@@ -6,9 +6,10 @@ module.exports = app => {
 
   const UserSchema = new Schema(
     {
+      __v: { type: Number, select: false },
       email: { type: String, required: true },
       nickname: { type: String, required: true },
-      pass: { type: String, required: true },
+      pass: { type: String, required: true, select: false },
       avatar: { type: String, required: false, default: '/user.png' },
     },
     { timestamp: true }
