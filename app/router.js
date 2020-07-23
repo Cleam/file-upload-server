@@ -16,6 +16,7 @@ module.exports = app => {
 
   router.get('/captcha', controller.utils.captcha);
   router.get('/emailCode', controller.utils.emailCode);
+  router.post('/uploadFile', controller.utils.uploadFile);
   // router.get('/user/register', controller.user.register);
   router.group({ name: 'user', prefix: '/user' }, router => {
     const { register, login, info } = controller.user;
