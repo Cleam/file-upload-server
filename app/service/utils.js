@@ -23,7 +23,6 @@ class UtilsService extends Service {
       text,
       html,
     };
-    console.log('[emailOptions]', emailOptions);
     try {
       await transporter.sendMail(emailOptions);
       return true;
